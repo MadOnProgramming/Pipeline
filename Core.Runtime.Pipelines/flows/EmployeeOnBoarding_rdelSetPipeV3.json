@@ -1,0 +1,203 @@
+{
+  "id": "EmployeeDataProcessingPipe",
+  "definitionId": 123,
+  "name": "Employee Data Processing Pipeline",
+  "description": "This pipeline processes employee data from staging.",
+  "createdAt": "2025-04-08T10:07:43.0291188+00:00",
+  "version": 1,
+  "toolVersion": "3.3.0.0",
+  "variables": [],
+  "inputs": [],
+  "outputs": [],
+  "outcomes": [
+    "Pass",
+    "Fail"
+  ],
+  "isReadonly": false,
+  "isSystem": false,
+  "isLatest": true,
+  "isPublished": true,
+  "root": {
+    "id": "MainFlowChart",
+    "nodeId": "Workflow1.MainFlowchart",
+    "name": "MainFlowchart",
+    "type": "Elsa.Flowchart",
+    "activities": [
+      {
+        "id": "StagingDataPreparation",
+        "nodeId": "MainFlowChart.StagingDataPreparation",
+        "name": "StagingDataPreparation",
+        "type": "Elsa.Flowchart",
+        "activities": [
+          {
+            "id": "FetchIStagingDataIdentifiers",
+            "nodeId": "MainFlowChart.FetchIStagingDataIdentifiers",
+            "name": "FetchIStagingDataIdentifiers",
+            "type": "Core.Runtime.Pipelines.ExecuteQueryStep",
+            "version": 1,
+            "connectionString": {
+              "typeName": "String",
+              "expression": {
+                "type": "CSharp",
+                "value": "return Input.GetResolver().GetServiceConnectionString(\"rdel\",1);"
+              }
+            },
+            "commandText": {
+              "typeName": "String",
+              "expression": {
+                "type": "Literal",
+                "value": "SELECT DISTINCT mdcf_recno as Identifier FROM employee_interface_staging_table3 WHERE mdcf_status = 'UP' AND staging_data_identifier = @staging_data_identifier_p"
+              }
+            },
+            "commandParameters": {
+              "typeName": "object",
+              "expression": {
+                "type": "CSharp",
+                "value": "return new { staging_data_identifier_p = Input.GetData().Get<string>(\"staging_data_identifier_ip\") };"
+              }
+            }
+          },
+          {
+            "id": "ForeachIStagingDataIdentifier",
+            "nodeId": "MainFlowChart.ForeachIStagingDataIdentifier",
+            "name": "ForeachIStagingDataIdentifier",
+            "type": "Elsa.ForEach",
+            "version": 1,
+            "customProperties": {
+              "canStartWorkflow": false,
+              "runAsynchronously": false
+            },
+            "currentValue": {
+              "typeName": "Object",
+              "memoryReference": {
+                "id": "CurrentItem"
+              }
+            },
+            "items": {
+              "typeName": "List<Object>",
+              "expression": {
+                "type": "CSharp",
+                "value": "return Output.From(\"FetchIStagingDataIdentifiers\");"
+              }
+            },
+            "body": {
+              "id": "ForeachIStagingDataIdentifierBody",
+              "nodeId": "ForeachIStagingDataIdentifier.ForeachIStagingDataIdentifierBody",
+              "name": "ForeachIStagingDataIdentifierBody",
+              "type": "Elsa.Flowchart",
+              "version": 1,
+              "customProperties": {
+                "notFoundConnections": [],
+                "canStartWorkflow": false,
+                "runAsynchronously": false
+              },
+              "metadata": {
+                "displayText": "ForEach app data identifier"
+              },
+              "activities": [
+                {
+                  "id": "FetchIStagingData",
+                  "nodeId": "ForeachIStagingDataIdentifierBody.FetchIStagingData",
+                  "name": "FetchIStagingData",
+                  "type": "Core.Runtime.Pipelines.ExecuteQueryStep",
+                  "version": 1,
+                  "connectionString": {
+                    "typeName": "String",
+                    "expression": {
+                      "type": "CSharp",
+                      "value": "return Input.GetResolver().GetServiceConnectionString(\"rdel\",1);"
+                    }
+                  },
+                  "commandText": {
+                    "typeName": "String",
+                    "expression": {
+                      "type": "Literal",
+                      "value": "SELECT mdcf_recno, mdcf_status, staging_data_identifier, employeeCode, dateOfBirth, employeeTypeCode, company, dateOfJoining, userName, emailId, MobileNumber FROM employee_interface_staging_table3 WHERE mdcf_recno = @mdcf_recno_p"
+                    }
+                  },
+                  "commandParameters": {
+                    "typeName": "object",
+                    "expression": {
+                      "type": "CSharp",
+                      "value": "var item = Variables.Get<dynamic>(\"CurrentItem\"); return new { mdcf_recno_p = item.Identifier };"
+                    }
+                  }
+                },
+                {
+                  "id": "InterfaceDataToApiModel",
+                  "nodeId": "ForeachIStagingDataIdentifierBody.InterfaceDataToApiModel",
+                  "name": "InterfaceDataToApiModel",
+                  "type": "Core.Runtime.Pipelines.SetVariableAsResultStep",
+                  "version": 1,
+                  "variableName": {
+                    "typeName": "String",
+                    "expression": {
+                      "type": "Literal",
+                      "value": "ApiRequestModel"
+                    }
+                  },
+                  "value": {
+                    "typeName": "Object",
+                    "expression": {
+                      "type": "CSharp",
+                      "value": "using System.Collections; var results = Output.From(\"FetchIStagingData\"); var stagingData = results as IEnumerable; var firstItem = stagingData.Cast<object>().FirstOrDefault(); dynamic item = firstItem; return new { recordNo = item.mdcf_recno, employeeCode = item.employeeCode, dateOfBirth = item.dateOfBirth, employeeTypeCode = item.employeeTypeCode, company = item.company, dateOfJoining = item.dateOfJoining, userName = item.userName, emailId = item.emailId, MobileNumber = item.MobileNumber, flowInstanceId = item.staging_data_identifier };"
+                    }
+                  }
+                },
+                {
+                  "id": "LogApiModelData",
+                  "nodeId": "ForeachIStagingDataIdentifierBody.LogApiModelData",
+                  "name": "LogApiModelData",
+                  "type": "Core.Runtime.Pipelines.LoggerStep",
+                  "version": 1,
+                  "text": {
+                    "typeName": "String",
+                    "expression": {
+                      "type": "CSharp",
+                      "value": "using Newtonsoft.Json; var model = Output.From(\"InterfaceDataToApiModel\"); return $\"Employee data mapped for API: {JsonConvert.SerializeObject(model,Formatting.None)}\";"
+                    }
+                  }
+                }                
+              ],
+              "connections": [
+                {
+                  "source": {
+                    "activity": "FetchIStagingData",
+                    "port": "Pass"
+                  },
+                  "target": {
+                    "activity": "InterfaceDataToApiModel",
+                    "port": "In"
+                  }
+                },
+                {
+                  "source": {
+                    "activity": "InterfaceDataToApiModel",
+                    "port": "Pass"
+                  },
+                  "target": {
+                    "activity": "LogApiModelData",
+                    "port": "In"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "connections": [
+          {
+            "source": {
+              "activity": "FetchIStagingDataIdentifiers",
+              "port": "Pass"
+            },
+            "target": {
+              "activity": "ForeachIStagingDataIdentifier",
+              "port": "In"
+            }
+          }
+        ]
+      }
+    ],
+    "connections": []
+  }
+}
