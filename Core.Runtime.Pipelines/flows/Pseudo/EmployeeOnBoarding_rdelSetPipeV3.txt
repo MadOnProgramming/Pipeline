@@ -1,0 +1,51 @@
+
+here 
+    - IStaging -> InterfaceStaging
+    - AppStaging -> ApplicationStaging
+    
+
+Employee Data Processing Pipeline
+└── MainFlowchart
+    ├── StagingDataPreparation (Elsa.Flowchart) - **DONE
+    │   ├── FetchIStagingDataIdentifiers (ExecuteQueryStep) - **DONE
+    │   └── ForeachIStagingDataIdentifier (Elsa.ForEach) - **DONE
+    │       └── ForeachIStagingDataIdentifierBody (Flowchart) - **DONE
+    │           ├── FetchIStagingData (ExecuteQueryStep) - **DONE
+    │           ├── InterfaceDataToApiModel (SetVariableAsResultStep) - **DONE
+    │           └── PopulateAppStagingDataThroughApi1 (InvokeApiStep) - **TODO
+    └── ApplicationDataIngestion (Elsa.Flowchart)
+        ├── FetchAppStagingDataIdentifiers (ExecuteQueryStep)
+        └── ForeachAppStagingDataIdentifier (Elsa.ForEach)
+            └── ForeachAppStagingDataIdentifierBody (Flowchart)
+                ├── FetchAppStagingData (ExecuteQueryStep)
+                ├── StagingDataToApiModel (SetVariableAsResultStep)
+                └── PopulateAppDataThroughApi2 (InvokeApiStep)
+
+Scripts needed to test the pipe
+-------------------------------------
+create table employee_interface_staging_table3
+(
+	mdcf_recno int,
+	mdcf_status nvarchar(2) default ('UP'), 
+	staging_data_identifier nvarchar(36),
+	employeeCode nvarchar(10),
+	dateOfBirth nvarchar(20),
+	employeeTypeCode nvarchar(20),
+	company nvarchar(20),
+	dateOfJoining nvarchar(20),
+	userName nvarchar(50),
+	emailId nvarchar(100),
+	MobileNumber nvarchar(20)
+)
+
+
+
+INSERT INTO employee_interface_staging_table3
+(mdcf_recno, mdcf_status, staging_data_identifier, employeeCode, dateOfBirth, employeeTypeCode, company, dateOfJoining, userName, emailId, MobileNumber)
+VALUES
+(1, 'UP', '557C283B-C979-447B-8159-9C574A8C5B94', 'EMP01', '1990-12-03 16:54:17', 'EMP', 'RAMCO', '2021-03-03', 'EMP01', 'EMP01@ramco.com', '0123456789'),
+(2, 'UP', '557C283B-C979-447B-8159-9C574A8C5B94', 'EMP02', '1990-12-04 16:54:17', 'EMP', 'RAMCO', '2021-03-03', 'EMP02', 'EMP02@ramco.com', '0123456789'),
+(3, 'UP', '557C283B-C979-447B-8159-9C574A8C5B94', 'EMP03', '1991-01-15 09:12:30', 'TEMP', 'TATA', '2022-05-10', 'EMP03', 'EMP03@tata.com', '9876543210'),
+(4, 'UP', '557C283B-C979-447B-8159-9C574A8C5B94', 'EMP04', '1988-07-22 11:45:00', 'CONTRACT', 'WIPRO', '2023-11-20', 'EMP04', 'EMP04@wipro.com', '1122334455'),
+(5, 'UP', '557C283B-C979-447B-8159-9C574A8C5B94', 'EMP05', '1993-05-10 18:00:00', 'EMP', 'RAMCO', '2024-01-05', 'EMP05', 'EMP05@ramco.com', '5544332211');
+
