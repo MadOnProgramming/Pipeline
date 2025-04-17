@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Core.Pipeline.Job</AssemblyName>
+    <VersionPrefix>0.0.0</VersionPrefix>
+    <VersionSuffix>0</VersionSuffix>
+    <Authors>Ramco Systems,Technology</Authors>
+    <Company>Ramco Systems</Company>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <AssemblyTitle>Core.Pipeline.Job</AssemblyTitle>
+    <Description>Core.Pipeline.Job</Description>
+    <Copyright>Ramco Systems@2025</Copyright>
+    <RootNamespace>Core.Pipeline.Job</RootNamespace>
+    <PackageId>Core.Pipeline.Job</PackageId>
+    <Product>Core.Pipeline.Job</Product>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <PackageReference Include="Core.Runtime.Job.Abstractions" Version="*" />
+    <ProjectReference Include="..\Core.Runtime.Pipelines\Core.Runtime.Pipelines.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <ProjectReference Include="..\..\..\Core.InfraRuntime\Core.Runtime.Job.Abstractions\Core.Runtime.Job.Abstractions.csproj" />
+    <ProjectReference Include="..\Core.Runtime.Pipelines\Core.Runtime.Pipelines.csproj" />
+  </ItemGroup>
+    
+</Project>
