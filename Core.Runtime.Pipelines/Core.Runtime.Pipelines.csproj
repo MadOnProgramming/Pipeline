@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Core.Runtime.Pipelines</AssemblyName>
+    <VersionPrefix>0.0.0</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <Authors>Ramco Systems,Technology</Authors>
+    <Company>Ramco Systems</Company>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <AssemblyTitle>Core.Runtime.Pipelines</AssemblyTitle>
+    <Description>Core.Runtime.Pipelines</Description>
+    <Copyright>Ramco Systems@2025</Copyright>
+    <RootNamespace>Core.Runtime.Pipelines</RootNamespace>
+    <PackageId>Core.Runtime.Pipelines</PackageId>
+    <Product>Core.Runtime.Pipelines</Product>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <PackageReference Include="Core.Runtime.Abstractions" Version="*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="Core.Runtime.Abstractions" Version="0.0.0-alpha" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core.InfraRuntime\Core.Runtime.Job.Abstractions\Core.Runtime.Job.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="flows\HelloWorld.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="flows\Apple_Pipe.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="flows\HelloWorld.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cronos" Version="0.9.0" />
+    <PackageReference Include="Elsa" Version="3.3.3" />
+    <PackageReference Include="Elsa.CSharp" Version="3.3.3" />
+    <PackageReference Include="Elsa.Liquid" Version="3.3.3" />
+    <PackageReference Include="RepoDb.SqlServer" Version="1.13.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="flows\EmployeeOnBoarding_rdelSetPipeForEachP.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\EmployeeOnBoarding_rdelSetPipeForEach.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\EmployeeOnBoarding_rdelSetPipe.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\EmployeeOnBoarding_rdelSetPipe.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\EmployeeOnBoarding_rdelPipe.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\EmployeeIngestion_Pipe.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\EmployeeOnBoarding_rdelSetPipeV3.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\EmployeeOnBoarding_rdelSetPipeV2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="flows\Helloworld_foreach.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
