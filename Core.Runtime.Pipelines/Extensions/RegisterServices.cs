@@ -41,11 +41,8 @@ namespace Core.Runtime.Pipelines
                 .AddActivity<Elsa.Workflows.Activities.ForEach>()
                 .AddActivity<Elsa.Workflows.Activities.ForEach<object>>()
                 .AddActivity<ExecuteQueryStep>()
-                .AddActivity<CreateBatchQueueStep>()
                 .AddActivity<InvokeApiStep>()
-                .AddActivity<EnqueueJobStep>()
                 .AddActivity<LoggerStep>()
-                .AddActivity<LongrunningLoggerStep>()
                 .AddActivity<SetVariableAsResultStep>()
                  ;
             });
